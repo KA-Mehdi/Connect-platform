@@ -11,6 +11,7 @@
     <script src="/node_modules/axios/dist/axios.min.js"></script>
 </head>
 <body>
+    <div id="liveAlertPlaceholder" class="show fade" style="position: fixed;z-index: 99999;width: 30%;bottom: 0;"></div>
     <!-- MODALS -->
     <!-- MODAL LOGIN -->
         <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -42,9 +43,9 @@
 
     <!-- MODAL LOGIN -->
 
-    <div class="container pt-2 bg-danger">
+    <div class="container pt-2 ">
         <div class="d-flex justify-content-center ">
-            <div class="col-8 bg-primary">
+            <div class="col-8 ">
                 <nav class="navbar navbar-expand-lg bg-light shadow rounded pt-2">
                     <div class="container-fluid ">
                         <a class="navbar-brand" href="#">Tarmeez</a>
@@ -65,7 +66,7 @@
 
                             <!-- LOGOUT  -->
                             <div class="d-flex w-100 justify-content-end" id="logout-div">
-                                <button onclick="logoutBtnClick()"  type="button" class="btn btn-danger mx-2"  data-bs-target="#login-modal" data-bs-toggle="modal">Logout</button>
+                                <button onclick="logoutBtnClick()" id="logout" type="button" class="btn btn-danger mx-2"  data-bs-target="#login-modal" data-bs-toggle="modal">Logout</button>
                             </div>
                         </div>
                     </div>
@@ -124,7 +125,7 @@
         
     </div>
 
-    <!-- <div id="success-alert"></div> -->
+
 </body>
 
 
@@ -186,6 +187,8 @@ axios.get("https://tarmeezacademy.com/api/v1/posts")
     
 })
 
+
+
 function loginBtnClick(){
     const user = document.getElementById('user').value
     const password= document.getElementById('password').value
@@ -199,7 +202,8 @@ function loginBtnClick(){
     axios.post(url, params)
     .then((Response) => {
         localStorage.setItem("token", Response.data.token)
-        localStorage.setItem("username", JSON.stringify(Response.data.user))
+        localStorage.setItem("username", JSON.stringify(Response.data.user))       
+        ShowSuccessAlert("logged in successfully !")
         setUpUI()
         // const  modal =     document.getElementById("login-modal")
         // const modalInstance = bootstrap.modal.getInstance(modal)
@@ -212,7 +216,7 @@ function loginBtnClick(){
 function logoutBtnClick(){
     localStorage.removeItem("token")
     localStorage.removeItem("username")
-    alert("suu")
+    ShowSuccessAlert("logged out successfully")
     setUpUI()
 }
 
@@ -236,42 +240,26 @@ function setUpUI()
     }
 }
 
+function ShowSuccessAlert(customMessage){
+        const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+        const appendAlert = (message, type) => {
+            const wrapper = document.createElement('div')
+            wrapper.innerHTML = [
+                `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+                `    <div>${message}</div>`,
+                '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+                '</div>'
+            ].join('')
 
+            alertPlaceholder.append(wrapper)
+        }
 
+        appendAlert(customMessage, 'success')
+        //  todo: setTimeout(()=>{
+        //     const alert = bootstrap.Alert.getOrCreateInstance('#liveAlertPlaceholder')
+        //     alert.close()
+        // }, 2000)
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-// ShowSuccessAlert()
-// function ShowSuccessAlert(){
-//         const alertPlaceholder = document.getElementById('success-alert')
-//         const appendAlert = (message, type) => {
-//             const wrapper = document.createElement('div')
-//             wrapper.innerHTML = [
-//                 `<div class="alert alert-${type} alert-dismissible" role="alert">`,
-//                 `    <div>${message}</div>`,
-//                 '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
-//                 '</div>'
-//             ].join('')
-
-//             alertPlaceholder.append(wrapper)
-//         }
-
-//         const alertTrigger = document.getElementById('liveAlertBtn')
-//         if (alertTrigger) {
-//         alertTrigger.addEventListener('click', () => {
-//             appendAlert('Nice, you triggered this alert message!', 'success')
-//         })
-//     }    
-// }
 </script>
 </html>
