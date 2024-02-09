@@ -13,7 +13,7 @@
 <body>
     <!-- MODALS -->
     <!-- MODAL LOGIN -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -24,34 +24,23 @@
                 <form>
                     <div class="mb-3">
                     <label for="recipient-name" class="col-form-label">username:</label>
-                    <input type="text" class="form-control" id="recipient-name">
+                    <input type="text" class="form-control" id="user" value="mehdi">
                     </div>
                     <div class="mb-3">
                     <label  for="message-text" class="col-form-label">Password:</label>
-                    <input type="password" class="form-control" id="recipient-name">
+                    <input type="password" class="form-control" id="password"  value ="1234567">
                     </div>
                 </form>
                 </div>
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="loginBtnClick()">Login</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="loginBtnClick()">Login</button>
                 </div>
             </div>
             </div>        
         </div>
 
     <!-- MODAL LOGIN -->
-
-
-
-
-
-
-
-
-
-
-
 
     <div class="container pt-2 bg-danger">
         <div class="d-flex justify-content-center ">
@@ -67,9 +56,16 @@
                                 <a class="nav-link active" aria-current="page" href="#">Home</a>
                                 <a class="nav-link" href="#">Profil</a>
                             </div>
-                            <div class="d-flex w-100 justify-content-end">
-                                <button type="button" class="btn btn-success mx-2"  data-bs-target="#exampleModal" data-bs-toggle="modal">Login</button>
-                                <button type="button" class="btn btn-success">Register</button>
+
+                            <!-- NOW -LOGGED IN USER -->
+                            <div class="d-flex w-100 justify-content-end" id="login-div">
+                                <button id="login-btn" type="button" class="btn btn-success mx-2"  data-bs-target="#login-modal" data-bs-toggle="modal">Login</button>
+                                <button id="Register-btn" type="button" class="btn btn-success">Register</button>
+                            </div>
+
+                            <!-- LOGOUT  -->
+                            <div class="d-flex w-100 justify-content-end" id="logout-div">
+                                <button onclick="logoutBtnClick()"  type="button" class="btn btn-danger mx-2"  data-bs-target="#login-modal" data-bs-toggle="modal">Logout</button>
                             </div>
                         </div>
                     </div>
@@ -127,10 +123,13 @@
             
         
     </div>
+
+    <!-- <div id="success-alert"></div> -->
 </body>
 
 
 <script>
+setUpUI()
 axios.get("https://tarmeezacademy.com/api/v1/posts")
 .then((Response) =>{
     const posts = Response.data.data
@@ -186,5 +185,93 @@ axios.get("https://tarmeezacademy.com/api/v1/posts")
 
     
 })
+
+function loginBtnClick(){
+    const user = document.getElementById('user').value
+    const password= document.getElementById('password').value
+
+    const params = {
+        "username": user,
+        "password": password,
+    }
+
+    const url = "https://tarmeezacademy.com/api/v1/login"
+    axios.post(url, params)
+    .then((Response) => {
+        localStorage.setItem("token", Response.data.token)
+        localStorage.setItem("username", JSON.stringify(Response.data.user))
+        setUpUI()
+        // const  modal =     document.getElementById("login-modal")
+        // const modalInstance = bootstrap.modal.getInstance(modal)
+        // modalInstance.hide()
+    })
+
+
+}
+
+function logoutBtnClick(){
+    localStorage.removeItem("token")
+    localStorage.removeItem("username")
+    alert("suu")
+    setUpUI()
+}
+
+function setUpUI()
+{
+    const token = localStorage.getItem("token")
+
+    const logout = document.getElementById('logout-div')
+    const login = document.getElementById('login-div')
+    // const loginBtn = document.getElementById("login-btn")
+    // const RegisterBtn = document.getElementById("Register-btn")
+    // const logoutBtn = document.getElementById("logout-btn")
+    
+    
+    if(token == null){
+        login.style.setProperty("display" , "flex", "important")
+        logout.style.setProperty("display" , "none", "important")
+    }else {
+        login.style.setProperty("display" , "none", "important")
+        logout.style.setProperty("display" , "flex", "important")
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ShowSuccessAlert()
+// function ShowSuccessAlert(){
+//         const alertPlaceholder = document.getElementById('success-alert')
+//         const appendAlert = (message, type) => {
+//             const wrapper = document.createElement('div')
+//             wrapper.innerHTML = [
+//                 `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+//                 `    <div>${message}</div>`,
+//                 '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+//                 '</div>'
+//             ].join('')
+
+//             alertPlaceholder.append(wrapper)
+//         }
+
+//         const alertTrigger = document.getElementById('liveAlertBtn')
+//         if (alertTrigger) {
+//         alertTrigger.addEventListener('click', () => {
+//             appendAlert('Nice, you triggered this alert message!', 'success')
+//         })
+//     }    
+// }
 </script>
 </html>
