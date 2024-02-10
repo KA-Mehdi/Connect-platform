@@ -13,6 +13,9 @@
 <body>
     <div id="liveAlertPlaceholder" class="show fade" style="position: fixed;z-index: 99999;width: 30%;bottom: 0;"></div>
     <!-- MODALS -->
+
+
+<!-- //////////////////////////////////////////// -->
     <!-- MODAL LOGIN -->
         <div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -40,8 +43,41 @@
             </div>
             </div>        
         </div>
-
     <!-- MODAL LOGIN -->
+
+    <!-- MODAL REGISTER -->
+    <div class="modal fade" id="register-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">LOGIN</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <form>
+                <div class="mb-3">
+                    <label for="recipient-name" class="col-form-label">name:</label>
+                    <input type="text" class="form-control" id="register-name" >
+                </div>
+                <div class="mb-3">
+                    <label for="recipient-name" class="col-form-label">username:</label>
+                    <input type="text" class="form-control" id="register-username" >
+                </div>
+                <div class="mb-3">
+                    <label  for="message-text" class="col-form-label">Password:</label>
+                    <input type="password" class="form-control" id="register-password"  >
+                </div>
+            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="registerBtnClick()">Register</button>
+            </div>
+        </div>
+        </div>        
+    </div>
+    <!-- // MODAL REGISTER // -->
+<!-- //////////////////////////////////////////// -->
 
     <div class="container pt-2 ">
         <div class="d-flex justify-content-center ">
@@ -61,7 +97,7 @@
                             <!-- NOW -LOGGED IN USER -->
                             <div class="d-flex w-100 justify-content-end" id="login-div">
                                 <button id="login-btn" type="button" class="btn btn-success mx-2"  data-bs-target="#login-modal" data-bs-toggle="modal">Login</button>
-                                <button id="Register-btn" type="button" class="btn btn-success">Register</button>
+                                <button id="Register-btn" type="button" class="btn btn-success" data-bs-target="#register-modal" data-bs-toggle="modal">Register</button>
                             </div>
 
                             <!-- LOGOUT  -->
@@ -75,8 +111,8 @@
         </div>
     </div>
     
-
     <!-- Main content -->
+<!-- /////////////////////////////////////////////-->
     <div class="container " style="height: 1600px;">
 
         <!-- posts -->
@@ -124,6 +160,8 @@
             
         
     </div>
+    <!-- // Main content -->
+<!-- /////////////////////////////////////////////-->
 
 
 </body>
@@ -203,11 +241,13 @@ function loginBtnClick(){
     .then((Response) => {
         localStorage.setItem("token", Response.data.token)
         localStorage.setItem("username", JSON.stringify(Response.data.user))       
-        ShowSuccessAlert("logged in successfully !")
+        ShowAlert("logged in successfully !", 'success')
         setUpUI()
         // const  modal =     document.getElementById("login-modal")
         // const modalInstance = bootstrap.modal.getInstance(modal)
         // modalInstance.hide()
+    }).catch((error)=>{
+        ShowAlert("wrong information", 'danger')
     })
 
 
@@ -216,8 +256,37 @@ function loginBtnClick(){
 function logoutBtnClick(){
     localStorage.removeItem("token")
     localStorage.removeItem("username")
-    ShowSuccessAlert("logged out successfully")
+    ShowAlert("logged out successfully", 'success')
     setUpUI()
+}
+
+function registerBtnClick(){
+    const name = document.getElementById('register-name').value
+    const user = document.getElementById('register-username').value
+    const password= document.getElementById('register-password').value
+
+    const params = {
+        
+        "username": user,
+        "password": password,
+        "name":name,
+    }
+
+    const url = "https://tarmeezacademy.com/api/v1/register"
+    axios.post(url, params)
+    .then((Response) => {
+        localStorage.setItem("token", Response.data.token)
+        localStorage.setItem("username", JSON.stringify(Response.data.user))       
+        
+        ShowAlert("new user registered successfully !", 'success')
+        setUpUI()
+        // const  modal =     document.getElementById("login-modal")
+        // const modalInstance = bootstrap.modal.getInstance(modal)
+        // modalInstance.hide()
+    }).catch((error) =>{
+        ShowAlert("the user has already been taken.")
+
+    })
 }
 
 function setUpUI()
@@ -240,7 +309,7 @@ function setUpUI()
     }
 }
 
-function ShowSuccessAlert(customMessage){
+function ShowAlert(customMessage , type="danger"){
         const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
         const appendAlert = (message, type) => {
             const wrapper = document.createElement('div')
@@ -254,7 +323,7 @@ function ShowSuccessAlert(customMessage){
             alertPlaceholder.append(wrapper)
         }
 
-        appendAlert(customMessage, 'success')
+        appendAlert(customMessage, type)
         //  todo: setTimeout(()=>{
         //     const alert = bootstrap.Alert.getOrCreateInstance('#liveAlertPlaceholder')
         //     alert.close()
