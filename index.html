@@ -218,9 +218,17 @@
 
 
 </body>
-
-
 <script>
+
+let  currentPage = 1
+let lastPage = 1
+window.addEventListener("scroll", function(){
+    const endOfPage = window.innerHeight + window.pageYOffset >= document.body.offsetHeight;
+
+    if(endOfPage && currentPage < lastPage){
+        getposts(false, currentPage += 1)
+    }
+})
 setUpUI()
 getposts()
 // axios.get("https://tarmeezacademy.com/api/v1/posts")
@@ -278,8 +286,6 @@ getposts()
 
     
 // })
-
-
 
 function loginBtnClick(){
     const user = document.getElementById('user').value
@@ -424,10 +430,17 @@ function getUsername(){
     }
     return user
 }
-function getposts(){
-    axios.get("https://tarmeezacademy.com/api/v1/posts")
+
+function getposts(reload = true , page = 1){
+    
+    axios.get(`https://tarmeezacademy.com/api/v1/posts?limit=2&page=${page}`)
     .then((Response) =>{
         const posts = Response.data.data
+        lastPage = Response.data.meta.last_page
+        if(reload){
+            document.getElementById("posts").innerHTML = ""
+        }
+        // document.getElementById("posts").innerHTML = ""
         for(post of posts){
             let postTitle = ''
             if(postTitle != null){
