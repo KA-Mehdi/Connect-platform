@@ -14,6 +14,11 @@
     <div id="liveAlertPlaceholder" class="show fade" style="position: fixed;z-index: 99999;width: 30%;bottom: 0;"></div>
     <!-- MODALS -->
 
+    <!-- ADD POST BUTTON -->
+    <div class="bg-primary" id="add-btn"   data-bs-toggle="modal"  data-bs-target="#create-post-modal"> 
+        +
+    </div>
+    <!-- // ADD POST BUTTON /// -->
 
 <!-- //////////////////////////////////////////// -->
     <!-- MODAL LOGIN -->
@@ -77,6 +82,42 @@
         </div>        
     </div>
     <!-- // MODAL REGISTER // -->
+
+    <!-- create modal -->
+        <div class="modal fade" id="create-post-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">create post</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">title:</label>
+                        <input type="text" class="form-control" id="create-post-title" >
+                    </div>
+
+                    <div class="mb-3">
+                        <textarea name=" body" id="create-post-body" style="width: 100%;height: 70px;border-radius: 40px;border-color: gray;resize: none;"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">image:</label>
+                        <input type="file" class="form-control" id="create-post-image" >
+                    </div>
+
+
+                </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="createAnewPost()">CREATE</button>
+                </div>
+            </div>
+            </div>        
+        </div>
+    <!-- // CREATE MODAl -->
 <!-- //////////////////////////////////////////// -->
 
     <div class="container pt-2 ">
@@ -169,61 +210,62 @@
 
 <script>
 setUpUI()
-axios.get("https://tarmeezacademy.com/api/v1/posts")
-.then((Response) =>{
-    const posts = Response.data.data
-    console.log(posts)
+getposts()
+// axios.get("https://tarmeezacademy.com/api/v1/posts")
+// .then((Response) =>{
+//     const posts = Response.data.data
+//     console.log(posts)
 
     
-    for(post of posts){
-        let postTitle = ''
-        if(postTitle != null){
-            post.title = postTitle
-        }
-        const content = 
-            `
-            <div class="card shadow">
-                            <div class="card-header">
-                                <img src="${post.author.profile_image}" alt="" style="width: 40px; height: 40px; " class="rounded-circle border">
-                                <b>${post.author.username}</b>
-                            </div>
+//     for(post of posts){
+//         let postTitle = ''
+//         if(postTitle != null){
+//             post.title = postTitle
+//         }
+//         const content = 
+//             `
+//             <div class="card shadow">
+//                             <div class="card-header">
+//                                 <img src="${post.author.profile_image}" alt="" style="width: 40px; height: 40px; " class="rounded-circle border">
+//                                 <b>${post.author.username}</b>
+//                             </div>
 
-                            <div class="card-body">
-                                <img src="${post.image}" class="w-100">
+//                             <div class="card-body">
+//                                 <img src="${post.image}" class="w-100">
 
-                                <h6 style="color: rgb(122, 119, 119);margin-top: 5px;">
-                                    ${post.created_at}
-                                </h6>
+//                                 <h6 style="color: rgb(122, 119, 119);margin-top: 5px;">
+//                                     ${post.created_at}
+//                                 </h6>
 
-                                <h5>
+//                                 <h5>
                                     
-                                    ${post.title}
-                                </h5>
+//                                     ${post.title}
+//                                 </h5>
 
-                                <p>
-                                    ${post.body}
-                                </p>
+//                                 <p>
+//                                     ${post.body}
+//                                 </p>
 
-                                <hr>
+//                                 <hr>
 
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
-                                        <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
-                                    </svg>
-                                    <span>
-                                        ${post.comments_count}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>            
-            `
-            document.getElementById("posts").innerHTML += content
-    }
-
-    
+//                                 <div>
+//                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+//                                         <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+//                                     </svg>
+//                                     <span>
+//                                         ${post.comments_count}
+//                                     </span>
+//                                 </div>
+//                             </div>
+//                         </div>            
+//             `
+//             document.getElementById("posts").innerHTML += content
+//     }
 
     
-})
+
+    
+// })
 
 
 
@@ -303,9 +345,11 @@ function setUpUI()
     if(token == null){
         login.style.setProperty("display" , "flex", "important")
         logout.style.setProperty("display" , "none", "important")
+        addBtn()
     }else {
         login.style.setProperty("display" , "none", "important")
         logout.style.setProperty("display" , "flex", "important")
+        
     }
 }
 
@@ -329,6 +373,93 @@ function ShowAlert(customMessage , type="danger"){
         //     alert.close()
         // }, 2000)
     }
+
+let url ="https://tarmeezacademy.com/api/v1/posts" 
+function createAnewPost(){
+    const title = document.getElementById('create-post-title').value;
+    const body= document.getElementById('create-post-body').value;
+    const image = document.getElementById('create-post-image').files[0];
+    const token = localStorage.getItem('token');
+
+    // MULTI PART 
+    var formData =  new FormData();
+    formData.append("body", body)
+    formData.append("title",title)
+    formData.append("image",image)
+
+    const headers = {
+        "authorization": `Bearer ${token}`,
+        // "Content-Type": "multipart/form-data",
+    };
+    axios.post(url, formData, { headers:headers} )
+    .then((Response) => {
+        ShowAlert("Post Created Successfully!", 'success')
+    }).catch((error) =>{
+        ShowAlert("failed to create post",'danger')
+    })
+    getposts()
+
+}
+
+
+function addBtn(){
+    const mybtn = document.getElementById('add-btn')
+    mybtn.style.display = 'none'
+}
+function getposts(){
+    axios.get("https://tarmeezacademy.com/api/v1/posts")
+    .then((Response) =>{
+        const posts = Response.data.data
+        for(post of posts){
+            let postTitle = ''
+            if(postTitle != null){
+                post.title = postTitle
+            }
+            const content = 
+                `
+                <div class="card shadow">
+                                <div class="card-header">
+                                    <img src="${post.author.profile_image}" alt="" style="width: 40px; height: 40px; " class="rounded-circle border">
+                                    <b>${post.author.username}</b>
+                                </div>
+
+                                <div class="card-body">
+                                    <img src="${post.image}" class="w-100">
+
+                                    <h6 style="color: rgb(122, 119, 119);margin-top: 5px;">
+                                        ${post.created_at}
+                                    </h6>
+
+                                    <h5>
+                                        
+                                        ${post.title}
+                                    </h5>
+
+                                    <p>
+                                        ${post.body}
+                                    </p>
+
+                                    <hr>
+
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+                                            <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
+                                        </svg>
+                                        <span>
+                                            ${post.comments_count}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>            
+                `
+                document.getElementById("posts").innerHTML += content
+        }
+
+        
+
+        
+    })
+}
 
 </script>
 </html>
