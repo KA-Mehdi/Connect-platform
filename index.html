@@ -61,17 +61,25 @@
             <div class="modal-body">
             <form>
                 <div class="mb-3">
+                    <label for="recipent-name" class="col-form-label">profil image</label>
+                    <input type="file" class="form-control" id="register-image-input">
+                </div>
+
+                <div class="mb-3">
                     <label for="recipient-name" class="col-form-label">name:</label>
                     <input type="text" class="form-control" id="register-name" >
                 </div>
+
                 <div class="mb-3">
                     <label for="recipient-name" class="col-form-label">username:</label>
                     <input type="text" class="form-control" id="register-username" >
                 </div>
+
                 <div class="mb-3">
                     <label  for="message-text" class="col-form-label">Password:</label>
                     <input type="password" class="form-control" id="register-password"  >
                 </div>
+
             </form>
             </div>
             <div class="modal-footer">
@@ -142,7 +150,11 @@
                             </div>
 
                             <!-- LOGOUT  -->
-                            <div class="d-flex w-100 justify-content-end" id="logout-div">
+                            <div class="d-flex w-100 justify-content-end align-items-center" id="logout-div">
+                                    <img id="nav-user-image" src="/profils-pics/profil.pnj.jpg" style="height: 40px;width: 40px;" class="rounded-circle" >
+                                    <b id="nav-name">
+                                        @hhhhh
+                                    </b>
                                 <button onclick="logoutBtnClick()" id="logout" type="button" class="btn btn-danger mx-2"  data-bs-target="#login-modal" data-bs-toggle="modal">Logout</button>
                             </div>
                         </div>
@@ -303,28 +315,32 @@ function logoutBtnClick(){
 }
 
 function registerBtnClick(){
+    // 
     const name = document.getElementById('register-name').value
-    const user = document.getElementById('register-username').value
+    const username = document.getElementById('register-username').value
     const password= document.getElementById('register-password').value
-
-    const params = {
-        
-        "username": user,
-        "password": password,
-        "name":name,
-    }
-
+    const image = document.getElementById('register-image-input').files[0];
     const url = "https://tarmeezacademy.com/api/v1/register"
-    axios.post(url, params)
+    // ::::::::::::::::::::::
+    // :::::::::::::::::::::::
+    // MULTI PART 
+    var formData =  new FormData();
+    formData.append("username", username)
+    formData.append("password",password)
+    formData.append("image",image)
+    formData.append("name", name)
+
+    const headers = {
+        "Content-Type": "multipart/form-data",
+    };
+    axios.post(url, formData, { headers:headers} )
     .then((Response) => {
+        console.log(Response.data)
         localStorage.setItem("token", Response.data.token)
         localStorage.setItem("username", JSON.stringify(Response.data.user))       
         
         ShowAlert("new user registered successfully !", 'success')
         setUpUI()
-        // const  modal =     document.getElementById("login-modal")
-        // const modalInstance = bootstrap.modal.getInstance(modal)
-        // modalInstance.hide()
     }).catch((error) =>{
         ShowAlert("the user has already been taken.")
 
@@ -337,19 +353,18 @@ function setUpUI()
 
     const logout = document.getElementById('logout-div')
     const login = document.getElementById('login-div')
-    // const loginBtn = document.getElementById("login-btn")
-    // const RegisterBtn = document.getElementById("Register-btn")
-    // const logoutBtn = document.getElementById("logout-btn")
-    
-    
+    const mybtn = document.getElementById('add-btn')
     if(token == null){
         login.style.setProperty("display" , "flex", "important")
         logout.style.setProperty("display" , "none", "important")
-        addBtn()
+        mybtn.style.display = 'none'
     }else {
         login.style.setProperty("display" , "none", "important")
         logout.style.setProperty("display" , "flex", "important")
-        
+        mybtn.style.display = 'block'
+        const user = getUsername()
+        document.getElementById("nav-name").innerHTML = user.username
+        document.getElementById("nav-user-image").src = user.profile_image
     }
 }
 
@@ -401,10 +416,13 @@ function createAnewPost(){
 
 }
 
-
-function addBtn(){
-    const mybtn = document.getElementById('add-btn')
-    mybtn.style.display = 'none'
+function getUsername(){
+    let user = null
+    const storageUser = localStorage.getItem("username")
+    if(storageUser != null){
+        user = JSON.parse(storageUser)
+    }
+    return user
 }
 function getposts(){
     axios.get("https://tarmeezacademy.com/api/v1/posts")
