@@ -4,11 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="styles.css">
+    <!-- <link rel="stylesheet" href="styles.css"> -->
     <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <!-- import axios -->
     <script src="/node_modules/axios/dist/axios.min.js"></script>
+    <style>
+            body{
+                background: #f0ecff;
+            }
+
+            .card{
+                margin-top: 10px;
+            }
+
+            #add-btn{
+                position: fixed;
+                bottom: 5%;
+                right: 7%;
+                height: 60px;
+                font-size: 50px;
+                color: white;
+                border-radius:100px;
+                width: 60px;
+                line-height: 1;
+                text-align: center;
+                cursor: pointer;
+                box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.3);
+            }
+    </style>
 </head>
 <body>
     <div id="liveAlertPlaceholder" class="show fade" style="position: fixed;z-index: 99999;width: 30%;bottom: 0;"></div>
@@ -133,7 +157,7 @@
             <div class="col-8 ">
                 <nav class="navbar navbar-expand-lg bg-light shadow rounded pt-2">
                     <div class="container-fluid ">
-                        <a class="navbar-brand" href="#">Tarmeez</a>
+                        <a class="navbar-brand" href="index.html">Connect</a>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
                         </button>
@@ -218,6 +242,7 @@
 
 
 </body>
+<script src="script.js"></script>
 <script>
 
 let  currentPage = 1
@@ -432,8 +457,8 @@ function getUsername(){
 }
 
 function getposts(reload = true , page = 1){
-    
-    axios.get(`https://tarmeezacademy.com/api/v1/posts?limit=2&page=${page}`)
+
+    axios.get(`https://tarmeezacademy.com/api/v1/posts?limit=5&page=${page}`)
     .then((Response) =>{
         const posts = Response.data.data
         lastPage = Response.data.meta.last_page
@@ -454,7 +479,7 @@ function getposts(reload = true , page = 1){
                                     <b>${post.author.username}</b>
                                 </div>
 
-                                <div class="card-body">
+                                <div class="card-body" onclick="postClicked(${post.id})" style="cursor:pointer;">
                                     <img src="${post.image}" class="w-100">
 
                                     <h6 style="color: rgb(122, 119, 119);margin-top: 5px;">
@@ -492,5 +517,9 @@ function getposts(reload = true , page = 1){
     })
 }
 
+function postClicked(postid){
+    // alert(postid)
+    window.location = `postDetails.html?postid=${postid}`
+}
 </script>
 </html>
