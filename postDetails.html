@@ -310,7 +310,10 @@
                             <div>
                                 ${CommentsCentent}
                             </div>
-
+                            <div class="input-group mb-3 " id="add-comment-div">
+                                <input id="comment-input" type='text' placeholder="add your comment here ...." class="form-control">
+                                <button onclick="CreateCommentClicked()" class="btn btn-outline-primary" type="button">send</button>
+                            </div>
                         </div>
                     </div>
             `
@@ -318,6 +321,28 @@
         })
 
         
+    }
+
+    function CreateCommentClicked(){
+        let commentBody = document.getElementById("comment-input").value
+
+        let params = {
+            "body": commentBody,
+        }
+
+        let token = localStorage.getItem("token")
+        let url = `https://tarmeezacademy.com/api/v1/posts/${id}/comments`
+        
+        axios.post(url, params, {
+            headers : {
+                "authorization": `Bearer ${token}`
+            }
+        }).then((Response) => {
+            ShowAlert("the comment has been created successfully", 'success')
+            getPost()
+        }).catch((error) => {
+            ShowAlert("the body field is empty", 'danger')
+        })
     }
 
 
