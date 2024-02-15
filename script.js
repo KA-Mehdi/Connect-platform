@@ -115,6 +115,7 @@ function ShowAlert(customMessage , type="danger"){
 function getUsername(){
     let user = null
     const storageUser = localStorage.getItem("username")
+    
     if(storageUser != null){
         user = JSON.parse(storageUser)
     }
