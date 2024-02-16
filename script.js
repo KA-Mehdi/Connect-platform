@@ -122,4 +122,110 @@ function getUsername(){
     return user
 }
 
+function deletetPostBtnClicked(postObject){
 
+    let post = JSON.parse(decodeURIComponent(postObject))
+
+    document.getElementById("delete-post-id-input").value = post.id
+    let postModal = new bootstrap.Modal(document.getElementById("delete-post-modal"), {})
+    postModal.toggle()
+}
+
+function editPostBtnClicked(postObject){
+
+    let post = (JSON.parse(decodeURIComponent(postObject)))
+    document.getElementById("post-id-input").value = post.id
+    document.getElementById("post-modal-submit-edit").innerHTML = "Update"
+    document.getElementById("post-modal-title").innerHTML = "Edit Post"
+    document.getElementById("create-post-title").value = post.title
+    document.getElementById("create-post-body").value = post.body
+    let postModal = new bootstrap.Modal(document.getElementById("create-post-modal"), {})
+    postModal.toggle()
+}
+
+
+function addBtnClicked(){
+    document.getElementById("post-id-input").value = ""
+    document.getElementById("post-modal-submit-edit").innerHTML = "Create"
+    document.getElementById("post-modal-title").innerHTML = "Create post"
+    document.getElementById("create-post-title").value = ""
+    document.getElementById("create-post-body").value = ""
+    let postModal = new bootstrap.Modal(document.getElementById("create-post-modal"), {})
+    postModal.toggle()
+
+}
+
+
+function ConfirmPostDelete(){
+    const postId = document.getElementById("delete-post-id-input").value
+    const token = localStorage.getItem("token")
+    const url = `https://tarmeezacademy.com/api/v1/posts/${postId}`
+    const headers = {
+        "authorization": `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+    }; 
+
+    
+    axios.delete(url, {headers:headers})
+    .then((Response) => {
+        getposts()
+        ShowAlert("Post Deleted Successfully!", 'success')
+    }).catch((error) =>{
+            ShowAlert("failed to Delete this  post",'danger')
+    })
+}
+
+function createAnewPost(){
+    let url ="https://tarmeezacademy.com/api/v1/posts" 
+    let postId = document.getElementById("post-id-input").value
+    
+    let isCreate = postId == null || postId == ""
+
+    // let url ="https://tarmeezacademy.com/api/v1/posts" 
+
+    const title = document.getElementById('create-post-title').value;
+    const body= document.getElementById('create-post-body').value;
+    const image = document.getElementById('create-post-image').files[0];
+    const token = localStorage.getItem('token');
+
+    // MULTI PART 
+    var formData =  new FormData();
+    formData.append("body", body)
+    formData.append("title",title)
+    formData.append("image",image)
+
+
+    const headers = {
+        "authorization": `Bearer ${token}`,
+        // "Content-Type": "multipart/form-data",
+    };
+
+    if(isCreate){
+        url ="https://tarmeezacademy.com/api/v1/posts" 
+        axios.post(url, formData, { headers:headers} )
+        .then((Response) => {
+            getposts()
+            ShowAlert("Post Created Successfully!", 'success')
+        }).catch((error) =>{
+            ShowAlert("failed to create post",'danger')
+        })
+    }else{
+        formData.append("_method", "put")
+        url =`https://tarmeezacademy.com/api/v1/posts/${postId}` 
+        
+        axios.post(url, formData, { headers:headers} )
+        .then((Response) => {
+            getposts()
+            ShowAlert("Post Created Successfully!", 'success')
+        }).catch((error) =>{
+            ShowAlert("failed to create post",'danger')
+        })
+    }
+
+}
+
+function profilclicked(){
+    const user = getUsername()
+    const userId = user.id
+    window.location = `profil.html?userid=${userId}`
+}
