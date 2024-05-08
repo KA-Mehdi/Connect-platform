@@ -13,6 +13,8 @@ getposts()
 
 
 let url ="https://tarmeezacademy.com/api/v1/posts" 
+
+
 function createAnewPost(){
 
     let postId = document.getElementById("post-id-input").value
